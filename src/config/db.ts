@@ -19,10 +19,6 @@ export const connectDB = async (): Promise<void> => {
       connectionString: process.env.DATABASE_URL,
     });
 
-    if (!pool) {
-      throw new Error("Failed to create Postgres pool");
-    }
-
     const adapter = new PrismaPg(pool);
     prismaInstance = new PrismaClient({ adapter });
 
