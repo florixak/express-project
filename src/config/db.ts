@@ -7,21 +7,25 @@ let pool: Pool | null = null;
 
 export const connectDB = async (): Promise<void> => {
   try {
+    if (prismaInstance) {
+      return;
+    }
+
     if (!process.env.DATABASE_URL) {
       throw new Error("DATABASE_URL is not defined");
     }
 
-    if (!pool) {
-      pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-      });
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
 
-      const adapter = new PrismaPg(pool);
-      prismaInstance = new PrismaClient({ adapter });
+    if (!pool) {
+      throw new Error("Failed to create Postgres pool");
     }
-    if (!prismaInstance) {
-      throw new Error("PrismaClient initialization failed");
-    }
+
+    const adapter = new PrismaPg(pool);
+    prismaInstance = new PrismaClient({ adapter });
+
     await prismaInstance.$connect();
     console.log("DB Connected via Prisma");
   } catch (error) {
