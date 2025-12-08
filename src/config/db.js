@@ -1,24 +1,40 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
+import { Pool } from "pg";
 
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
-});
-
-export const prisma = new PrismaClient({ adapter });
+let prismaInstance;
+let pool;
 
 const connectDB = async () => {
   try {
-    await prisma.$connect();
+    if (!pool) {
+      pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+      });
+
+      const adapter = new PrismaPg(pool);
+      prismaInstance = new PrismaClient({ adapter });
+    }
+
+    await prismaInstance.$connect();
     console.log("DB Connected via Prisma");
   } catch (error) {
     console.error(`Database connection error: ${error.message}`);
+    console.error(error);
     process.exit(1);
   }
 };
 
 const disconnectDB = async () => {
-  await prisma.$disconnect();
+  if (prismaInstance) await prismaInstance.$disconnect();
+  if (pool) await pool.end();
 };
 
-export { connectDB, disconnectDB };
+const getPrisma = () => {
+  if (!prismaInstance) {
+    throw new Error("Prisma not initialized. Call connectDB() first.");
+  }
+  return prismaInstance;
+};
+
+export { getPrisma, connectDB, disconnectDB };

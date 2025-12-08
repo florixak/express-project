@@ -1,4 +1,4 @@
-import { prisma } from "../config/db.js";
+import { getPrisma } from "../config/db.js";
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -7,7 +7,7 @@ const register = async (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  const userExists = await prisma.user.findUnique({
+  const userExists = await getPrisma().user.findUnique({
     where: { email: email },
   });
 
