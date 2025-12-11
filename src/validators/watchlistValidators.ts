@@ -24,5 +24,12 @@ const watchlistItemSchema = z.object({
     .optional(),
   notes: z.string().max(500).optional(),
 });
+const watchlistItemUpdateSchema = watchlistItemSchema
+  .pick({
+    status: true,
+    rating: true,
+    notes: true,
+  })
+  .partial();
 
-export { watchlistItemSchema };
+export { watchlistItemSchema, watchlistItemUpdateSchema };
