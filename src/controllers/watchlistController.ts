@@ -73,10 +73,6 @@ const updateWatchlistItem = async (req: Request, res: Response) => {
     notes?: string;
   };
 
-  if (!userId || !movieId) {
-    return res.status(400).json({ error: "User ID and Movie ID are required" });
-  }
-
   const existingItem = await getPrisma().watchlistItem.findUnique({
     where: { userId_movieId: { userId, movieId } },
   });
