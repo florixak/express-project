@@ -124,7 +124,7 @@ MIT
 
 ---
 
-**Author:** [florixak](https://github.com/florixak)
+**Author:** [Ondřej Pták](https://github.com/florixak)
 
 ## Credits
 
